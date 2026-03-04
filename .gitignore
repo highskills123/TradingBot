@@ -1,0 +1,29 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Trained models (large binary files; track separately if needed)
+models/
+
+# Trade log generated at runtime
+trades.csv
+
+# IDE
+.idea/
+.vscode/

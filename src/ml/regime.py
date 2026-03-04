@@ -27,10 +27,10 @@ more rigorous walk-forward labelling scheme in production.
 from __future__ import annotations
 
 import logging
-import pickle
 from pathlib import Path
 from typing import Any
 
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -193,16 +193,14 @@ class RegimeDetector:
 
     def _save(self) -> None:
         self.model_path.parent.mkdir(parents=True, exist_ok=True)
-        with self.model_path.open("wb") as fh:
-            pickle.dump({"model": self._model, "scaler": self._scaler}, fh)
+        joblib.dump({"model": self._model, "scaler": self._scaler}, self.model_path)
         logger.info("Regime model saved to %s.", self.model_path)
 
     def _load(self) -> None:
         try:
-            with self.model_path.open("rb") as fh:
-                payload = pickle.load(fh)  # noqa: S301
+            payload: dict = joblib.load(self.model_path)
             self._model = payload["model"]
             self._scaler = payload["scaler"]
             logger.info("Regime model loaded from %s.", self.model_path)
-        except Exception as exc:  # noqa: BLE001
+        except (FileNotFoundError, KeyError, ValueError) as exc:
             logger.warning("Could not load regime model: %s", exc)

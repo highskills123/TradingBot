@@ -223,5 +223,5 @@ class TradeJournal:
                 self._trades.append(row.to_dict())
                 self._update_equity(float(row["pnl"]))
             logger.info("Loaded %d existing trades from %s.", len(self._trades), self.log_path)
-        except Exception as exc:  # noqa: BLE001
+        except (FileNotFoundError, pd.errors.EmptyDataError, KeyError, ValueError) as exc:
             logger.warning("Could not load existing trades: %s", exc)

@@ -22,6 +22,8 @@ import logging
 import time
 from typing import Any
 
+import ccxt
+
 from src.config import load_config
 from src.data.features import build_features
 from src.data.fetcher import build_exchange, fetch_ohlcv
@@ -131,8 +133,10 @@ class TradingBot:
             except KeyboardInterrupt:
                 logger.info("Bot stopped by user.")
                 break
-            except Exception as exc:  # noqa: BLE001
-                logger.exception("Unhandled error in main loop: %s", exc)
+            except (ccxt.NetworkError, ccxt.ExchangeError, ccxt.BaseError) as exc:
+                logger.exception("Exchange error in main loop: %s", exc)
+            except RuntimeError as exc:
+                logger.exception("Runtime error in main loop: %s", exc)
 
             time.sleep(poll_interval)
 
@@ -274,7 +278,7 @@ class TradingBot:
             balance = self._exchange.fetch_balance()
             quote = self.symbol.split("/")[1]
             return float(balance["free"].get(quote, 10_000.0))
-        except Exception as exc:  # noqa: BLE001
+        except (ccxt.NetworkError, ccxt.ExchangeError) as exc:
             logger.warning("Could not fetch balance: %s", exc)
             return 10_000.0
 

@@ -1,0 +1,42 @@
+# TradingBot Configuration
+exchange:
+  name: binance          # ccxt exchange id
+  testnet: true          # use testnet / paper trading
+  api_key: ""            # set via environment variable BOT_API_KEY
+  api_secret: ""         # set via environment variable BOT_API_SECRET
+
+trading:
+  symbol: "BTC/USDT"
+  timeframe: "5m"        # candle timeframe (1m / 5m / 1h)
+  strategy: "trend"      # trend | mean_reversion | breakout
+
+risk:
+  risk_per_trade: 0.005  # 0.5 % of capital per trade
+  atr_stop_multiplier: 1.5
+  atr_tp_multiplier: 2.0
+  trailing_stop: false
+
+protection:
+  max_trades_per_day: 10
+  cooldown_seconds: 60   # minimum seconds between trades
+  kill_switch_loss_pct: 0.05  # stop trading if daily loss exceeds 5 %
+
+features:
+  ema_fast: 9
+  ema_slow: 21
+  ema_trend: 50
+  rsi_period: 14
+  atr_period: 14
+  vwap_period: 20
+  breakout_periods: 20
+  volume_avg_periods: 20
+
+ml:
+  enabled: true
+  regime_model_path: "models/regime_model.pkl"
+
+journal:
+  log_path: "trades.csv"
+  rolling_window: 50     # trades used for rolling expectancy
+  min_trades_to_cut: 20  # minimum trades before expectancy check
+  expectancy_threshold: 0.0  # switch to paper if rolling expectancy drops below this
